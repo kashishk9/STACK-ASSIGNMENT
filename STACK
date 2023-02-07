@@ -1,0 +1,305 @@
+/REORDER LIST/
+class Solution:
+    def reorderList(self, A: Optional[ListNode]) -> None:
+        """
+        Do not return anything, modify head in-place instead.
+        """
+        if A.next==None:
+            return A
+
+        #find middle
+        fast=slow=A
+        while fast and fast.next:
+            fast=fast.next.next
+            slow=slow.next
+
+        #reversing the second half
+        t2=slow.next
+        slow.next=None
+        prev=None
+        while t2:
+            nxt=t2.next
+            t2.next=prev
+            prev=t2
+            t2=nxt
+            
+        
+        # arranging as per question
+        current1=A
+        current2=prev
+
+        while current1 and current2:
+            next1=current1.next
+            next2=current2.next
+            current1.next=current2
+            current2.next=next1
+            current1=next1
+            current2=next2
+            
+        # return A
+        
+ /REVERSE A STRING USING STACK/
+ char* reverse(char *S, int len)
+{
+    //code here
+    stack<char>st;
+    for(int i=0;i<len;i++)
+    {
+        st.push(S[i]);
+    }
+    int j=0;
+    while(!st.empty())
+    {
+        S[j]=st.top();
+        j++;
+        st.pop();
+    }
+    return S;
+}
+
+/VALID PARANTHESES/
+class Solution {
+public:
+    bool isValid(string s) 
+    {
+        stack<char> st;  
+        for(auto i:s)  
+        {
+            if(i=='(' or i=='{' or i=='[') st.push(i);  
+            else  
+            {
+                if(st.empty() or (st.top()=='(' and i!=')') or (st.top()=='{' and i!='}') or (st.top()=='[' and i!=']')) return false;
+                st.pop();  
+            }
+        }
+        return st.empty();  
+    }
+};
+
+/SCORE OF PARANTHESES/
+class Solution {
+public:
+    int scoreOfParentheses(string s) {
+        int depth = 0, res = 0;
+        char prev = '(';
+        
+        for (const char &ch: s) {
+            if (ch == '(')
+                depth++;
+            else {
+                depth--;
+                if (prev == '(')
+                    res += pow(2, depth);
+            }
+            
+            prev = ch;
+        }
+        
+        return res;
+    }
+};
+
+/NEXT GREATER ELEMENT/
+class Solution
+{
+    public:
+    //Function to find the next greater element for each element of the array.
+    vector<long long> nextLargerElement(vector<long long> arr, int n){
+        // Your code here
+        vector<long long>v;
+       stack<long long>s;
+       for(int i=n-1;i>=0;i--)
+       {
+           if(s.size()==0)
+           {
+               v.push_back(-1);
+           }
+           else if(s.size()>0 && s.top()>arr[i])
+           {
+               v.push_back(s.top());
+           }
+           else if(s.size()>0 && s.top()<=arr[i])
+           {
+               while(s.size()>0 && s.top()<=arr[i])
+               {
+                   s.pop();
+               }
+               if(s.size()==0)
+               {
+                   v.push_back(-1);
+               }
+               else{
+                   v.push_back(s.top());
+               }
+           }
+           s.push(arr[i]);
+       }
+       reverse(v.begin(),v.end());
+       return v;
+    }
+};
+
+/NEXT GREATER ELEMENT II/
+class Solution {
+public:
+    vector<int> nextGreaterElements(vector<int>& nums) {
+        
+    vector<int> vec;
+         
+    for(int i=0;i<nums.size();i++){
+        
+        bool flag=false;
+        int k=i+1;
+       int idx=INT_MIN;
+        
+        while(idx!=i){
+            
+            idx=k%nums.size();
+            if(nums[idx]>nums[i]){
+                flag=true;
+                vec.push_back(nums[idx]);
+                break;
+            }
+            k++;
+           
+        }
+         if(!flag) vec.push_back(-1);
+    }
+        return vec;
+        
+    }
+};
+
+/REMOVE DUPLICATE LETTERS/
+class Solution {
+public:
+    string removeDuplicateLetters(string s) {
+        int len = s.size();
+        string res = "";
+        unordered_map<char, int> M;
+        unordered_map<char, bool> V;
+        stack<int> S;
+        
+        for (auto c : s) {
+            if (M.find(c) == M.end()) M[c] = 1;
+            else M[c]++; 
+        }
+        for (unordered_map<char, int>::iterator iter=M.begin(); iter!=M.end(); iter++) V[iter->first] = false;
+        
+        cout<<M.size()<<V.size()<<endl;
+        for (int i=0; i<len; i++) {
+            M[s[i]]--;
+            if (V[s[i]] == true) continue;
+            
+            while (!S.empty() and s[i] < s[S.top()] and M[s[S.top()]] > 0) {
+                V[s[S.top()]] = false;
+                S.pop();
+            }
+            S.push(i);
+            V[s[i]] = true;
+        }
+        while (!S.empty()) {
+            res = s[S.top()] + res;
+            S.pop();
+        }
+        return res;
+    }
+};
+
+/MAXIMUN RECTANGULAR AREA IN HISTOGRAM/
+class Solution
+{
+    public:
+   vector<int> nextsmal(long long a[],int n){
+
+        stack<int> st;
+
+        vector<int> res(n);
+
+        for(int i=n-1;i>=0;i--){
+
+            while(!st.empty() && a[st.top()]>=a[i]) st.pop();
+
+            res[i] = st.empty()?n:st.top();
+
+            st.push(i);
+
+        }
+
+       // reverse(res.begin(),res.end());
+
+        return res;
+
+    }
+
+    vector<int> prevsmal(long long a[],int n){
+
+        stack<int> st;
+
+        vector<int> res;
+
+        for(int i=0;i<n;i++){
+
+            while(!st.empty() && a[st.top()]>=a[i]) st.pop();
+
+            if(st.empty()) res.push_back(-1);
+
+            else res.push_back(st.top());
+
+            st.push(i);
+
+        }
+
+        return res;
+
+    }
+
+  
+
+    long long getMaxArea(long long arr[], int n)
+
+    {
+
+        long long maxarea=0;
+
+        vector<int> ps=prevsmal(arr,n);
+
+        vector<int> ns=nextsmal(arr,n);
+
+        for(int i=0;i<n;i++){
+
+            long long cur=(ns[i]-ps[i]-1)* arr[i];
+
+            maxarea=max(maxarea,cur);
+
+        }
+
+        return maxarea;
+
+    }
+};
+
+/TRAPPING RAIN WATER/
+class Solution {
+public:
+    int trap(vector<int>& A) {
+        int N = A.size(), ans = 0;
+        
+        vector<int> left(N, 0), right(N, 0);
+        
+        for(int i = 1; i < N; i++) {
+            left[i] = max(left[i - 1], A[i - 1]);
+        }
+        
+        for(int i = N - 2; i >= 0; i--) {
+            right[i] = max(right[i + 1], A[i + 1]);
+        }
+        
+        for(int i = 1; i < N - 1; i++) {
+            ans += max(0, min(left[i], right[i]) - A[i]);
+        }
+        
+        return ans;
+        
+    }
+};
